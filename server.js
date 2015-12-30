@@ -15,35 +15,32 @@ app.use(express.static( __dirname + "/public") );
 app.use( bodyParser.json() );
 
 app.get('/contactlist', function(request, response){
-	console.log('I recived a GET request!');
-	getEmployees( request, response );
+	//console.log('I recived a GET request!');
+	getContacts( request, response );
 });
 app.post('/contactlist', function(request, response){
 	//console.log(request.body);
-	addEmployee( request, response );
+	addContact( request, response );
 });
 
-function addEmployee( req, res ){
-	var record = console.log(req.body);
-	console.log( record );
+function addContact( req, res ){
 	pool.getConnection( function(err, conn){
-		var insertquery = "INSERT INTO employees (employeeNumber,email,firstName,lastName,jobTitle) VALUES (" + record.employeeNumber +","+record.email + "," + record.firstName + "," + record.lastName + "," + record.jobTitle + ");";
-		console.log( 'insertquery :', insertquery);
-		conn.query( insertquery , function(err, rows) {
+		conn.query( "INSERT INTO contacts (name,email,number) VALUES('"+req.body.name + "','" + req.body.email + "','" + req.body.number + "');" , function(err, rows) {
              if (!err)
 			{
 				res.json( rows );
+
 			}else{
-				console.log('Error while performing the query..check function addEmployee() for more details..');
+				console.log('Error while performing the query..check function addEmployee() for more details..', err);
 			}
          })
 	});
 }
 
 
-function getEmployees(req, res){
+function getContacts(req, res){
 	pool.getConnection( function(err, conn){
-		conn.query("select * from employees", function(err, rows) {
+		conn.query("select * from contacts", function(err, rows) {
              if (!err)
 			{
 				res.json( rows );
